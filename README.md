@@ -1,4 +1,4 @@
-# Configuration Templates Generator
+# openTEM Deployment Config Generator
 
 This project provides a script to materialize openTEM configuration files to create a docker-compose.yaml file from Jinja2 templates using settings defined in environment variable files.
 
