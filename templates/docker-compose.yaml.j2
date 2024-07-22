@@ -18,8 +18,10 @@ services:
       - "{{ config_volume }}"
       - "{{ tmp_volume }}"
     depends_on:
+    {% if include_ximea %}
       ximea:
         condition: service_healthy
+    {% endif %}  
       config:
         condition: service_completed_successfully
 
