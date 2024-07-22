@@ -1,0 +1,66 @@
+services:
+  broker:
+    image: {{ broker_image }}:{{ broker_version }}
+    environment:
+      ANONYMOUS_LOGIN: {{ broker_anonymous_login }}
+    ports:
+      - "{{ broker_port1 }}"
+      - "{{ broker_port2 }}"
+    healthcheck:
+      timeout: {{ broker_healthcheck_timeout }}
+      start_period: {{ broker_healthcheck_start_period }}
+      test: ["CMD", "curl", "-f", "{{ broker_healthcheck_url }}"]
+
+  pytem:
+    image: {{ pytem_image }}:{{ pytem_version }}
+    command: {{ pytem_command }}
+    volumes:
+      - "{{ config_volume }}"
+      - "{{ tmp_volume }}"
+    depends_on:
+      ximea:
+        condition: service_healthy
+      config:
+        condition: service_completed_successfully
+
+  tem_graph:
+    image: {{ tem_graph_image }}:{{ tem_graph_version }}
+    command: {{ tem_graph_command }}
+    volumes:
+      - "{{ config_volume }}"
+      - "{{ tmp_volume }}"
+    depends_on:
+      broker:
+        condition: service_healthy    
+      config:
+        condition: service_completed_successfully
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: {{ tem_graph_driver }}
+              count: {{ tem_graph_count }}
+              capabilities:
+                - {{ tem_graph_capabilities }}
+
+  {% if include_ximea %}
+  ximea:
+    image: {{ ximea_image }}:{{ ximea_version }}
+    command: {{ ximea_command }}
+    volumes:
+      - "{{ tmp_volume }}"
+      - "{{ config_volume }}"
+    devices:
+      - "{{ ximea_device }}"
+    depends_on:
+      broker:
+        condition: service_healthy
+      config:
+        condition: service_completed_successfully
+    healthcheck:
+      start_period: {{ ximea_healthcheck_start_period }}
+      test: {{ ximea_healthcheck_test }}
+  {% endif %}
+
+volumes:
+  config:

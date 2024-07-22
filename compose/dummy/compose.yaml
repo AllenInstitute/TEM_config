@@ -1,9 +1,0 @@
-services:
-  config:
-    image: 10.128.25.8/pigeon-config
-    command: pigeon-config -r /raw_config/ /raw_config/dummy/ /config/
-    volumes:
-      - "../../config:/raw_config"
-      - "config:/config"
-include:
-  - ../dummy_cam.yaml
