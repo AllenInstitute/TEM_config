@@ -57,7 +57,7 @@ def create_default_settings_env(env_name):
         "XIMEA_HEALTHCHECK_START_PERIOD": "10s",
         "XIMEA_HEALTHCHECK_TEST": "timeout 5s pigeon --host broker -s camera.status --one || exit 1",
 
-        "CONFIG_VOLUME": "config:/config",
+        "CONFIG_VOLUME": f"output/{env_name}:/config",
         "TMP_VOLUME": "/tmp:/tmp",
 
         "XIMEA_IMAGE_SIZE": "1024",
